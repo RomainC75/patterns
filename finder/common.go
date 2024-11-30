@@ -4,7 +4,6 @@ import (
 	"design-patterns/strategies"
 	"design-patterns/types"
 	"errors"
-	"fmt"
 	"sync"
 )
 
@@ -44,26 +43,28 @@ func (s *SFinder[T]) RunSerie(min T, max T) []T {
 }
 
 func (s *SFinder[T]) RunParallel(min T, max T) []T {
+
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
-	numbers, done := s.Generator(min, max)
+	numbers, done := s.Generator(min, max, wg)
 	res := s.Parallel(8, numbers)
 
 	s.Accumulator(1, res, done)
 
 	wg.Wait()
 
-	return []T{}
+	return s.res
 }
 
-func (s *SFinder[T]) Generator(min T, max T) (chan T, chan int) {
+func (s *SFinder[T]) Generator(min T, max T, wg *sync.WaitGroup) (chan T, chan int) {
 	gen := make(chan T)
 	done := make(chan int)
 	go func() {
 		for i := min; i <= max; i++ {
 			gen <- i
 		}
+		wg.Done()
 	}()
 	return gen, done
 }
@@ -86,7 +87,7 @@ func (s *SFinder[T]) Parallel(chanNum int, inputChan chan T) chan T {
 				j := <-inputChan
 				if s.Strategy.IsOk(j) {
 					res <- j
-					fmt.Println(i, " -> ", j)
+					// fmt.Println(i, " -> ", j)
 				}
 			}
 		}()
@@ -95,7 +96,7 @@ func (s *SFinder[T]) Parallel(chanNum int, inputChan chan T) chan T {
 }
 
 func (s *SFinder[T]) Accumulator(chanNum int, inputChan chan T, done chan int) {
-	// res := []T{}
+
 	go func() {
 		// resCh := make(chan []T)
 
@@ -104,7 +105,8 @@ func (s *SFinder[T]) Accumulator(chanNum int, inputChan chan T, done chan int) {
 			case <-done:
 				return
 			case val := <-inputChan:
-				fmt.Println("- ", val)
+				// fmt.Println("- ", val)
+				s.res = append(s.res, val)
 			}
 			// res = append(res, val)
 		}

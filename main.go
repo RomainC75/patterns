@@ -7,7 +7,7 @@ import (
 )
 
 var min int64 = 1_000_000
-var max int64 = 10_000_000
+var max int64 = 1_500_000
 
 func main() {
 	f, err := finder.NewFinder[int64](finder.Prime)
