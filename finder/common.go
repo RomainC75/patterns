@@ -43,7 +43,7 @@ func (s *SFinder[T]) RunSerie(min T, max T) []T {
 }
 
 func (s *SFinder[T]) RunParallel(min T, max T) []T {
-
+	// s.res = make([]T, 0, (max-min)/100)
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
@@ -61,6 +61,8 @@ func (s *SFinder[T]) Generator(min T, max T, wg *sync.WaitGroup) (chan T, chan i
 	gen := make(chan T)
 	done := make(chan int)
 	go func() {
+		defer close(gen)
+		defer close(done)
 		for i := min; i <= max; i++ {
 			gen <- i
 		}
@@ -70,7 +72,6 @@ func (s *SFinder[T]) Generator(min T, max T, wg *sync.WaitGroup) (chan T, chan i
 }
 
 func (s *SFinder[T]) Parallel(chanNum int, inputChan chan T) chan T {
-
 	// ! capacity ?
 
 	// out := make([]chan T, chanNum)

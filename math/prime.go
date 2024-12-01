@@ -5,8 +5,8 @@ import (
 )
 
 func IsPrime[T types.CustomInt](num T) bool {
-	if num == 1 {
-		return true
+	if num == 0 || num == 1 {
+		return false
 	}
 	var i T
 	for i = 2; i < num; i++ {
