@@ -16,7 +16,7 @@ func (bt *btr) Add(value int) {
 
 	depth, _ := findNodeAndAdd(value, 0, bt.root)
 	if depth > bt.len {
-		bt.len = depth
+		bt.len = depth + 1
 	}
 }
 
@@ -68,8 +68,9 @@ func (bt *btr) WholeDisplay() error {
 	}
 	nodeList := []*node{bt.root}
 
-	for level := 0; level <= bt.len; level++ {
-		displayLine(nodeList)
+	leftMargin := bt.len - 1
+	for level := 0; level < bt.len; level++ {
+		displayLine(nodeList, leftMargin, level)
 		newNodeList := []*node{}
 		for _, node := range nodeList {
 			if node == nil {
@@ -79,16 +80,27 @@ func (bt *btr) WholeDisplay() error {
 			}
 		}
 		nodeList = newNodeList
+		leftMargin--
 	}
 	return nil
 }
 
-func displayLine(nodeList []*node) {
-	for _, node := range nodeList {
+func displayLine(nodeList []*node, leftMargin int, level int) {
+	for i := 0; i < leftMargin; i++ {
+
+		fmt.Print("\t")
+	}
+	for index, node := range nodeList {
 		if node == nil {
-			fmt.Printf("x\t")
+			fmt.Printf("x")
 		} else {
-			fmt.Printf("%d\t", node.value)
+			fmt.Printf("%d", node.value)
+		}
+
+		if index%2 != 0 {
+			fmt.Print("\t")
+		} else {
+			fmt.Print("  ")
 		}
 	}
 	fmt.Printf("\n\n")

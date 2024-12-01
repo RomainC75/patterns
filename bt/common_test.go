@@ -6,7 +6,7 @@ import (
 )
 
 var values = []int{
-	5, 3, 7, 4, 1, 10,
+	5, 3, 7, 4, 1, 10, 9, 2,
 }
 
 func TestBinaryTree(t *testing.T) {
