@@ -44,6 +44,7 @@ func BenchmarkPrimeParallel(b *testing.B) {
 	res := f.RunParallel(start, end)
 	fmt.Println("-- Parallel -->", len(res))
 }
+
 func BenchmarkPrimeSerie(b *testing.B) {
 	f, _ := finder.NewFinder[int64](finder.Prime)
 	res := f.RunSerie(start, end)
